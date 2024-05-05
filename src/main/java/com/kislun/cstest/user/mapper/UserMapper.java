@@ -1,5 +1,6 @@
 package com.kislun.cstest.user.mapper;
 
+import com.kislun.cstest.user.dto.UserBody;
 import com.kislun.cstest.user.model.LocalUser;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;

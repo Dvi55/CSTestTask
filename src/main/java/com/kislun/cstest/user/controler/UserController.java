@@ -1,12 +1,16 @@
 package com.kislun.cstest.user.controler;
 
-import com.kislun.cstest.user.mapper.UserBody;
+import com.kislun.cstest.user.dto.UserBody;
 import com.kislun.cstest.user.model.LocalUser;
 import com.kislun.cstest.user.service.UserService;
+import com.kislun.cstest.validation.group.OnPatch;
 import jakarta.validation.Valid;
+import jakarta.validation.executable.ValidateOnExecution;
+import jakarta.validation.groups.Default;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -36,7 +40,7 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<LocalUser> createUser1(@Valid @RequestBody UserBody userBody) {
+    public ResponseEntity<LocalUser> createUser1(@Validated(Default.class) @RequestBody UserBody userBody) {
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(userBody));
     }
 
@@ -47,7 +51,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<LocalUser> updateUser(@PathVariable("id") UUID id, @Valid @RequestBody UserBody userBody) {
+    public ResponseEntity<LocalUser> updateUser(@PathVariable("id") UUID id, @Validated(Default.class) @RequestBody UserBody userBody) {
         Optional<LocalUser> updatedUser = userService.getUserById(id);
         if (updatedUser.isPresent()) {
             return updatedUser.map(u -> ResponseEntity.ok(userService.updateUser(updatedUser.get(), userBody)))
@@ -56,8 +60,9 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
     }
+
     @PatchMapping("/{id}")
-    public ResponseEntity<LocalUser> patchUser(@PathVariable("id") UUID id, @Valid @RequestBody UserBody userBody) {
+    public ResponseEntity<LocalUser> patchUser(@PathVariable("id") UUID id, @Validated(OnPatch.class) @RequestBody UserBody userBody) {
         Optional<LocalUser> user = userService.getUserById(id);
         return user.map(localUser -> ResponseEntity.ok(userService.patchUser(localUser))).
                 orElseGet(() -> ResponseEntity.notFound().build());
@@ -65,9 +70,9 @@ public class UserController {
 
     @GetMapping("/search")
     public ResponseEntity<Object> searchBetweenDate(@RequestParam("start")
-                                                             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
-                                                             @RequestParam("end")
-                                                             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)LocalDate to) {
+                                                    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
+                                                    @RequestParam("end")
+                                                    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
         if (from.isBefore(to)) {
             return ResponseEntity.ok(userService.searchBetweenDate(from, to));
         } else {

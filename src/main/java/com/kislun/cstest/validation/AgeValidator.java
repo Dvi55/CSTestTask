@@ -1,5 +1,6 @@
 package com.kislun.cstest.validation;
 
+import com.kislun.cstest.validation.annotation.Adult;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import org.springframework.beans.factory.annotation.Value;

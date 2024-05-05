@@ -1,7 +1,7 @@
 package com.kislun.cstest.user.service;
 
+import com.kislun.cstest.user.dto.UserBody;
 import com.kislun.cstest.user.dao.LocalUserDAO;
-import com.kislun.cstest.user.mapper.UserBody;
 import com.kislun.cstest.user.mapper.UserMapper;
 import com.kislun.cstest.user.model.LocalUser;
 import jakarta.transaction.Transactional;
