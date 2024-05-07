@@ -15,6 +15,9 @@ public class AgeValidator implements ConstraintValidator<Adult, LocalDate> {
 
     @Override
     public boolean isValid(LocalDate dateOfBirth, ConstraintValidatorContext constraintValidatorContext) {
+        if (dateOfBirth == null) {
+            return true;
+        }
         return Period.between(dateOfBirth, LocalDate.now()).getYears() >= minAge;
     }
 }

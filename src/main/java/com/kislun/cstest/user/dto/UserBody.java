@@ -23,6 +23,7 @@ public class UserBody {
 
     @Adult(message = "User must be at least {#minAge} years old", groups = {Default.class, OnPatch.class})
     @Past(message = "Birth date must be in the past", groups = {Default.class, OnPatch.class})
+    @NotNull(message = "Birth date cannot be empty", groups = Default.class)
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate birthDate;
 

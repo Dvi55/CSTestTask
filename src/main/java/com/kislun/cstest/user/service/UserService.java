@@ -1,14 +1,16 @@
 package com.kislun.cstest.user.service;
 
-import com.kislun.cstest.user.dto.UserBody;
 import com.kislun.cstest.user.dao.LocalUserDAO;
+import com.kislun.cstest.user.dto.UserBody;
 import com.kislun.cstest.user.mapper.UserMapper;
+import com.kislun.cstest.user.model.Address;
 import com.kislun.cstest.user.model.LocalUser;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -27,8 +29,8 @@ public class UserService {
         return localUserDAO.findById(id);
     }
 
-    public List<LocalUser> getAllUsers() {
-        return localUserDAO.findAll();
+    public Page<LocalUser> getAllUsers(Pageable pageable) {
+        return localUserDAO.findAll(pageable);
     }
 
     @Transactional
@@ -43,24 +45,36 @@ public class UserService {
 
     @Transactional
     public LocalUser updateUser(LocalUser user, UserBody userBody) {
-        if (isEmailExists(userBody.getEmail())) {
-            throw new IllegalArgumentException("Email already exists");
-        }
         userMapper.updateUserFromBody(userBody, user);
         return localUserDAO.save(user);
     }
 
 
-    public List<LocalUser> searchBetweenDate(LocalDate from, LocalDate to) {
-        return localUserDAO.findByBirthDateBetween(from, to);
+    public Page<LocalUser> searchBetweenDate(LocalDate from, LocalDate to, Pageable pageable) {
+        return localUserDAO.findByBirthDateBetween(from, to, pageable);
     }
 
-    public LocalUser patchUser(LocalUser user) {
+    public LocalUser patchUser(LocalUser user, UserBody userBody) {
+        user.setFirstName(userBody.getFirstName() != null ? userBody.getFirstName() : user.getFirstName());
+        user.setLastName(userBody.getLastName() != null ? userBody.getLastName() : user.getLastName());
+        user.setBirthDate(userBody.getBirthDate() != null ? userBody.getBirthDate() : user.getBirthDate());
+        user.setPhoneNumber(userBody.getPhoneNumber() != null ? userBody.getPhoneNumber() : user.getPhoneNumber());
+        user.setEmail(userBody.getEmail() != null ? userBody.getEmail() : user.getEmail());
+        if (user.getAddress() == null) {
+            user.setAddress(new Address());
+        }
+        if (userBody.getAddress() != null) {
+            patchAddress(userBody, user.getAddress());
+        }
         return localUserDAO.save(user);
     }
 
-    private boolean isEmailExists(String email) {
-        return localUserDAO.findByEmailIgnoreCase(email).isPresent();
+    private void patchAddress(UserBody userBody, Address existAddress) {
+        existAddress.setCity(userBody.getAddress().getCity() != null ? userBody.getAddress().getCity() : existAddress.getCity());
+        existAddress.setStreet(userBody.getAddress().getStreet() != null ? userBody.getAddress().getStreet() : existAddress.getStreet());
+        existAddress.setCountry(userBody.getAddress().getCountry() != null ? userBody.getAddress().getCountry() : existAddress.getCountry());
+        existAddress.setRegion(userBody.getAddress().getRegion() != null ? userBody.getAddress().getRegion() : existAddress.getRegion());
+        existAddress.setBuilding(userBody.getAddress().getBuilding() != null ? userBody.getAddress().getBuilding() : existAddress.getBuilding());
     }
 
 }
