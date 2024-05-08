@@ -46,8 +46,12 @@ public class UserController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable("id") UUID id) {
-        userService.deleteUserById(id);
-        return ResponseEntity.noContent().build();
+        Optional<LocalUser> user = userService.getUserById(id);
+        if (user.isPresent()) {
+            userService.deleteUserById(id);
+            return ResponseEntity.noContent().build();
+        }
+        throw new UserNotFoundException(id);
     }
 
     @PutMapping("/{id}")

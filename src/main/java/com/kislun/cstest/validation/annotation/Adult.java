@@ -16,8 +16,7 @@ import static java.lang.annotation.ElementType.FIELD;
 @Target({FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Adult {
-
-    String message() default "Wrong age";
+    String message() default "Age must be at least {minAge}";
 
     Class<?>[] groups() default {};
 

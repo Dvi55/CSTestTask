@@ -21,7 +21,11 @@ import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(UserController.class)
@@ -78,9 +82,23 @@ class UserControllerTest {
     @Test
     void testDeleteUser() throws Exception {
         UUID userId = UUID.randomUUID();
+        LocalUser user = new LocalUser();
+        user.setId(userId);
+
+        when(userService.getUserById(userId)).thenReturn(Optional.of(user));
 
         mockMvc.perform(delete("/api/v1/users/{id}", userId))
                 .andExpect(status().isNoContent());
+    }
+
+    @Test
+    public void testDeleteUser_UserDoesNotExist() throws Exception {
+        UUID userId = UUID.randomUUID();
+
+        when(userService.getUserById(userId)).thenReturn(Optional.empty());
+
+        mockMvc.perform(delete("/api/v1/users/{id}", userId))
+                .andExpect(status().isNotFound());
     }
 
     @Test

@@ -18,11 +18,20 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @MockitoSettings(strictness = Strictness.LENIENT)
 @ExtendWith(MockitoExtension.class)
@@ -113,14 +122,14 @@ class UserServiceTest {
 
     @Test
     void getAllUsers() {
-            Page<LocalUser> expectedPage = new PageImpl<>(expectedUsers);
+        Page<LocalUser> expectedPage = new PageImpl<>(expectedUsers);
 
-            when(localUserDAO.findAll(any(Pageable.class))).thenReturn(expectedPage);
+        when(localUserDAO.findAll(any(Pageable.class))).thenReturn(expectedPage);
 
-            Page<LocalUser> result = userService.getAllUsers(PageRequest.of(0, 10));
+        Page<LocalUser> result = userService.getAllUsers(PageRequest.of(0, 10));
 
-            assertEquals(expectedPage, result);
-        }
+        assertEquals(expectedPage, result);
+    }
 
     @Test
     void testGetAllUsers_ReturnsExpectedUsers() {
@@ -165,7 +174,6 @@ class UserServiceTest {
 
         assertThrows(IllegalArgumentException.class, () -> userService.deleteUserById(userId));
     }
-
 
 
     @Test

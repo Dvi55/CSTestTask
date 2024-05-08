@@ -12,4 +12,5 @@ import java.util.UUID;
 @Repository
 public interface LocalUserDAO extends JpaRepository<LocalUser, UUID> {
     Page<LocalUser> findByBirthDateBetween(LocalDate birthDateStart, LocalDate birthDateEnd, Pageable pageable);
+
 }
