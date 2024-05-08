@@ -29,8 +29,7 @@ public class LocalUser {
     @Column(name = "birth_date", nullable = false)
     private LocalDate birthDate;
 
-    @OneToOne(orphanRemoval = true)
-    @JoinColumn(name = "address_id")
+    @OneToOne(cascade = CascadeType.PERSIST, orphanRemoval = true)
     private Address address;
 
     @Column(name = "phone_number", length = 20)
